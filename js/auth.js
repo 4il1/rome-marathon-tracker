@@ -40,10 +40,10 @@ export async function isOwner() {
   return (owner = !error && data === true);
 }
 
-export async function sendSignInLink(email) {
+export async function sendSignInLink(email, captchaToken) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: ALLOW_NEW_USERS, emailRedirectTo: location.origin + location.pathname + '#runs' },
+    options: { shouldCreateUser: ALLOW_NEW_USERS, captchaToken, emailRedirectTo: location.origin + location.pathname + '#runs' },
   });
   if (error) throw error;
 }

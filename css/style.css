@@ -179,6 +179,7 @@ table.data { width: 100%; border-collapse: collapse; margin-top: 12px; font-vari
 .signin label { font-weight: 600; font-size: 14px; }
 .signin input { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; min-height: 44px; }
 .signin input:focus { outline: 2px solid var(--lime); outline-offset: 1px; }
+.signin .captcha:empty { display: none; }
 .signin .btn { justify-content: center; font: inherit; font-weight: 600; cursor: pointer; }
 .field-error { color: #FF8A7A; font-size: 13px; margin: 0; }
 .link-error { font-size: 14px; margin: 0 0 16px; }

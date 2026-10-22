@@ -3,6 +3,8 @@
 export const CONFIG = {
   supabaseUrl: 'https://bxaobteunjqfidfhguvl.supabase.co',
   supabaseKey: 'sb_publishable_wNwSLYiteQQbT9r-arDBSg_rjhMWs1q',
+  // Cloudflare Turnstile site key (public). The secret key is only in Supabase (Auth > Attack Protection).
+  turnstileSiteKey: '0x4AAAAAAFgp0049icudX5gi',
   goalTime: '3:50:00',
   goalPace: '5:27',
   links: {
