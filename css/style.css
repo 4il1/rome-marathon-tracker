@@ -181,6 +181,7 @@ table.data { width: 100%; border-collapse: collapse; margin-top: 12px; font-vari
 .signin input:focus { outline: 2px solid var(--lime); outline-offset: 1px; }
 .signin .btn { justify-content: center; font: inherit; font-weight: 600; cursor: pointer; }
 .field-error { color: #FF8A7A; font-size: 13px; margin: 0; }
+.link-error { font-size: 14px; margin: 0 0 16px; }
 
 .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
 

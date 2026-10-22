@@ -3,6 +3,7 @@ import { renderPlan } from './pages/plan.js';
 import { renderRuns } from './pages/runs.js';
 import { renderSignIn } from './pages/signin.js';
 import { renderProgress } from './pages/progress.js';
+import { linkError } from './auth.js';
 
 const PAGES = { home: renderHome, plan: renderPlan, runs: renderRuns, signin: renderSignIn, progress: renderProgress };
 const root = document.getElementById('page');
@@ -18,4 +19,6 @@ async function route() {
 }
 
 window.addEventListener('hashchange', route);
+// A sign-in link that failed shows why on the sign-in page, wherever it was meant to land.
+if (await linkError()) history.replaceState(history.state, '', location.pathname + '#signin');
 route();

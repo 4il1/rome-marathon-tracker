@@ -1,4 +1,4 @@
-import { sendSignInLink, isOwner, signOut } from '../auth.js';
+import { sendSignInLink, isOwner, signOut, linkError } from '../auth.js';
 
 export async function renderSignIn(root) {
   if (await isOwner()) {
@@ -10,9 +10,11 @@ export async function renderSignIn(root) {
     return;
   }
 
+  const failed = await linkError();
   root.innerHTML = `
     <h1>Owner sign-in</h1>
     <p class="lede">Only the site owner can upload runs. Everyone else can view the site without signing in.</p>
+    ${failed ? '<p class="field-error link-error" role="alert"></p>' : ''}
     <form class="panel signin" novalidate>
       <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" placeholder="name@example.com" required>
@@ -21,6 +23,7 @@ export async function renderSignIn(root) {
       <p class="muted small">Open the link on this device and in this browser.</p>
     </form>`;
 
+  if (failed) root.querySelector('.link-error').textContent = failed;
   const form = root.querySelector('form');
   const email = root.querySelector('#email');
   const err = root.querySelector('#err');
