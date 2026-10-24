@@ -15,4 +15,5 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
 
 root = Path(__file__).resolve().parent.parent
 handler = functools.partial(NoCacheHandler, directory=str(root))
-http.server.ThreadingHTTPServer(("", 5500), handler).serve_forever()
+# 127.0.0.1 only: the preview is for this computer (and Windows Firewall does not prompt).
+http.server.ThreadingHTTPServer(("127.0.0.1", 5500), handler).serve_forever()

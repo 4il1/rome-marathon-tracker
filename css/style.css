@@ -19,7 +19,7 @@ a { color: inherit; }
 .shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
 .nav { position: sticky; top: 0; height: 100vh; padding: 20px 12px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
 .brand { font-weight: 700; font-size: 17px; padding: 4px 12px 20px; display: flex; align-items: center; gap: 10px; }
-.brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+.brand .dot, .gate-site .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
 .nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 500; }
 .nav a:hover { background: var(--surface); color: var(--text); }
 .nav a.active { background: var(--surface-2); color: var(--text); }
@@ -50,9 +50,6 @@ h2 { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
 .hero-text .lede { color: #D5D8DE; margin: 0; }
 .hero-actions { position: absolute; z-index: 1; top: 16px; right: 16px; display: flex; gap: 8px; }
 .hero .like { background: rgba(14, 15, 18, 0.82); }
-.pill-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: rgba(14, 15, 18, 0.82); color: var(--text); font: inherit; font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer; }
-.pill-btn:hover { border-color: var(--muted); }
-.pill-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 .hero .like.liked { background: var(--lime); }
 .like { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: transform .1s; }
 .like:hover { border-color: var(--lime); }
@@ -167,22 +164,12 @@ table.data { width: 100%; border-collapse: collapse; margin-top: 12px; font-vari
 @media (max-width: 760px) { .run-list li { grid-template-columns: 48px minmax(0, 1fr) 96px; gap: 10px; } }
 
 .small { font-size: 13px; }
-.upload { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
-.upload > div { flex: 1; min-width: 220px; }
-.file-btn { cursor: pointer; }
-.file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.file-btn:focus-within { outline: 2px solid var(--text); outline-offset: 2px; }
-.upload-msg { flex-basis: 100%; margin: 0; font-size: 14px; }
-.upload-msg:empty { display: none; }
-.upload-msg.ok { color: var(--lime); } .upload-msg.bad { color: #FF8A7A; }
-.signin { max-width: 420px; display: flex; flex-direction: column; gap: 10px; }
-.signin label { font-weight: 600; font-size: 14px; }
-.signin input { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; min-height: 44px; }
-.signin input:focus { outline: 2px solid var(--lime); outline-offset: 1px; }
-.signin .captcha:empty { display: none; }
-.signin .btn { justify-content: center; font: inherit; font-weight: 600; cursor: pointer; }
 .field-error { color: #FF8A7A; font-size: 13px; margin: 0; }
-.link-error { font-size: 14px; margin: 0 0 16px; }
+.gate { max-width: 440px; margin: 12vh auto 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.gate-site { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 700; }
+.gate .captcha { min-height: 65px; }
+body.gated .nav { display: none; }
+body.gated .shell { grid-template-columns: minmax(0, 1fr); }
 
 .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
 
@@ -197,7 +184,7 @@ table.data { width: 100%; border-collapse: collapse; margin-top: 12px; font-vari
   .card .big { font-size: 28px; }
   .chart { height: 240px; }
   .data .hide-sm { display: none; }
-  .like-label, .pill-label { display: none; }
+  .like-label { display: none; }
   .strava-card { grid-column: 1 / -1; }
   .hero { height: 260px; margin: -20px -16px 14px; border-radius: 0; }
   .hero-text { padding: 16px; }

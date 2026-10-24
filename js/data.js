@@ -2,8 +2,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { CONFIG } from './config.js';
 import { parseDay } from './util.js';
 
-// PKCE returns the sign-in code in the query string, which keeps it clear of the #page routes.
-export const supabase = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, { auth: { flowType: 'pkce' } });
+export const supabase = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
 
 let cache;
 
@@ -41,14 +40,4 @@ export async function addLike() {
   const { error } = await supabase.from('likes').insert({});
   if (error) throw error;
   try { localStorage.setItem(LIKED_KEY, '1'); } catch { /* private mode: like still counts */ }
-}
-
-/** Insert runs, skipping any already stored (same start time and distance). Returns the number added. */
-export async function uploadRuns(rows) {
-  const { data, error } = await supabase.from('runs')
-    .upsert(rows, { onConflict: 'start_time,distance_km', ignoreDuplicates: true })
-    .select('id');
-  if (error) throw error;
-  clearRunsCache();
-  return data.length;
 }

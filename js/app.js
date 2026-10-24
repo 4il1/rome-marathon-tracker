@@ -1,14 +1,14 @@
 import { renderHome } from './pages/home.js';
 import { renderPlan } from './pages/plan.js';
 import { renderRuns } from './pages/runs.js';
-import { renderSignIn } from './pages/signin.js';
 import { renderProgress } from './pages/progress.js';
-import { linkError } from './auth.js';
+import { ensureHuman } from './gate.js';
 
-const PAGES = { home: renderHome, plan: renderPlan, runs: renderRuns, signin: renderSignIn, progress: renderProgress };
+const PAGES = { home: renderHome, plan: renderPlan, runs: renderRuns, progress: renderProgress };
 const root = document.getElementById('page');
 
 async function route() {
+  await ensureHuman(root);
   const name = (location.hash.slice(1) || 'home').split('/')[0];
   document.querySelectorAll('.nav a').forEach((a) => a.classList.toggle('active', a.dataset.page === name));
   const render = PAGES[name];
@@ -19,6 +19,4 @@ async function route() {
 }
 
 window.addEventListener('hashchange', route);
-// A sign-in link that failed shows why on the sign-in page, wherever it was meant to land.
-if (await linkError()) history.replaceState(history.state, '', location.pathname + '#signin');
 route();

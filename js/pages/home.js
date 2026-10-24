@@ -1,18 +1,16 @@
 import { CONFIG } from '../config.js';
 import { loadRuns, likeCount, hasLiked, addLike } from '../data.js';
-import { isOwner, signOut } from '../auth.js';
 import { today, raceDate, planStart, daysBetween, planWeek, weeklyTotals, fmtDate, addDays, km1, WEEKS } from '../util.js';
 
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const STRAVA = '<svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#FC4C02" stroke="none" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>';
 const BAA = '<img class="badge" src="assets/baa-logo.png" alt="" width="30" height="30">';
 const PDF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 13h6M9 17h6"/></svg>';
-const USER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
 const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.2-8.6C1.3 8.4 3 5 6.4 5c2 0 3.6 1.3 4.4 2.5h2.4C14 6.3 15.6 5 17.6 5 21 5 22.7 8.4 21.2 11.4 19 15.6 12 20 12 20z"/></svg>';
 const ext = '<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
 
 export async function renderHome(root) {
-  const [runs, owner] = await Promise.all([loadRuns(), isOwner()]);
+  const runs = await loadRuns();
   const now = today();
   const weeks = weeklyTotals(runs);
   const current = planWeek(now); // 0 = before plan, 21 = after
@@ -38,9 +36,6 @@ export async function renderHome(root) {
         <p class="lede">${fmtDate(raceDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
       </div>
       <div class="hero-actions">
-        ${owner
-          ? `<button class="pill-btn" id="signout" type="button" aria-label="Sign out">${USER}<span class="pill-label">Sign out</span></button>`
-          : `<a class="pill-btn" href="#signin" aria-label="Owner sign-in">${USER}<span class="pill-label">Sign in</span></a>`}
         <button class="like" id="like" type="button" aria-pressed="false">${HEART}<span class="like-label">Like</span><span class="like-count" aria-live="polite"></span></button>
       </div>
     </header>
@@ -103,7 +98,6 @@ export async function renderHome(root) {
 
   drawWeekly(root.querySelector('#weekly'), weeks, current, now);
   setUpLike(root.querySelector('#like'));
-  root.querySelector('#signout')?.addEventListener('click', async () => { await signOut(); renderHome(root); });
   playHero(root.querySelector('.hero-video'));
 }
 

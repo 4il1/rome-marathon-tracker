@@ -1,6 +1,4 @@
-import { loadRuns, uploadRuns } from '../data.js';
-import { parseGarminCsv } from '../garmin.js';
-import { isOwner } from '../auth.js';
+import { loadRuns } from '../data.js';
 import { addDays, fmtDate, km1 } from '../util.js';
 
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -17,18 +15,15 @@ const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0
 let chart;
 
 export async function renderRuns(root) {
-  const [runs, owner] = await Promise.all([loadRuns(), isOwner()]);
+  const runs = await loadRuns();
   const years = [...new Set(runs.map((r) => r.date.getFullYear()))].sort((a, b) => b - a);
   let year = years[0];
 
   root.innerHTML = `
     <h1>Runs</h1>
     <p class="lede">${runs.length} runs since ${fmtDate(runs.at(-1).date, { month: 'long', year: 'numeric' })}</p>
-    ${owner ? uploadHtml() : ''}
     <div class="chips" role="tablist" aria-label="Year">${years.map((y) => `<button type="button" role="tab" data-year="${y}">${y}</button>`).join('')}</div>
     <div id="year-view"></div>`;
-
-  if (owner) wireUpload(root);
 
   const chips = root.querySelectorAll('.chips button');
   const show = () => {
@@ -140,37 +135,5 @@ function drawMonthly(canvas, monthly) {
         y: { beginAtZero: true, grid: { color: border }, border: { display: false }, ticks: { color: muted, callback: (v) => `${v} km` } },
       },
     },
-  });
-}
-
-function uploadHtml() {
-  return `
-    <section class="panel upload">
-      <div><h2>Add runs</h2><div class="muted small">Upload a Garmin Connect “Activities” CSV export. Runs already on the site are skipped.</div></div>
-      <label class="btn primary file-btn"><input type="file" accept=".csv,text/csv" id="csv">Choose CSV</label>
-      <p class="upload-msg" id="upload-msg" role="status"></p>
-    </section>`;
-}
-
-function wireUpload(root) {
-  const input = root.querySelector('#csv');
-  const msg = root.querySelector('#upload-msg');
-  input.addEventListener('change', async () => {
-    const file = input.files[0];
-    if (!file) return;
-    msg.className = 'upload-msg';
-    msg.textContent = `Reading ${file.name}…`;
-    try {
-      const rows = parseGarminCsv(await file.text());
-      if (!rows.length) throw new Error('No running activities found in this file.');
-      const added = await uploadRuns(rows);
-      msg.classList.add('ok');
-      msg.textContent = `Added ${added} new run${added === 1 ? '' : 's'}. Skipped ${rows.length - added} already on the site.`;
-      if (added) setTimeout(() => renderRuns(root), 1500);
-    } catch (e) {
-      msg.classList.add('bad');
-      msg.textContent = `Upload failed: ${e.message}`;
-    }
-    input.value = '';
   });
 }
