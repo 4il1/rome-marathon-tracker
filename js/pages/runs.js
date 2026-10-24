@@ -64,14 +64,14 @@ function renderYear(el, runs, year) {
     <section class="panel">
       <div class="panel-head"><div><h2>Run log</h2><div class="muted" style="font-size:13px">Newest first · bar length shows distance</div></div></div>
       <ol class="run-list">${runs.map((r) => `
-        <li>
+        <li><a class="run-link" href="#run/${r.id}">
           <div class="run-date"><b>${fmtDate(r.date, { day: 'numeric', month: 'short' })}</b><span>${fmtDate(r.date, { weekday: 'short' })}</span></div>
           <div class="run-main">
             <div class="run-title">${r.title ?? 'Run'}${r.type === 'Treadmill Running' ? ' <span class="pill">Treadmill</span>' : ''}</div>
             <div class="run-bar"><i style="width:${(r.km / maxKm) * 100}%"></i></div>
           </div>
           <div class="run-stats"><b>${km1(r.km)} km</b><span>${pace(r.avg_pace_s_per_km)} /km${r.avg_hr ? ` · ${r.avg_hr} bpm` : ''}</span></div>
-        </li>`).join('')}</ol>
+        </a></li>`).join('')}</ol>
     </section>`;
 
   drawMonthly(el.querySelector('#monthly'), monthly);

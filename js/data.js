@@ -41,3 +41,29 @@ export async function addLike() {
   if (error) throw error;
   try { localStorage.setItem(LIKED_KEY, '1'); } catch { /* private mode: like still counts */ }
 }
+
+let detailCache;
+
+/** Per-run detail from Garmin activity files (runs since 2025), as a Map of run id -> row. Tracks and charts are left out. */
+export async function loadDetails() {
+  if (detailCache) return detailCache;
+  const { data, error } = await supabase.from('run_details')
+    .select('run_id,splits,route,hr_zone_s,drift_pct,form,training_effect').is('error', null);
+  if (error) throw error;
+  detailCache = new Map(data.map((d) => [d.run_id, { ...d, drift_pct: d.drift_pct == null ? null : Number(d.drift_pct) }]));
+  return detailCache;
+}
+
+/** Daily recovery rows since a date, or { ok: false, reason } if the viewer password is wrong. */
+export async function loadRecovery(password, since) {
+  const { data, error } = await supabase.rpc('get_recovery', { password, since });
+  if (error) throw error;
+  return data;
+}
+
+/** Full detail for one run, including the route track and chart streams, or null if there is none. */
+export async function loadRunDetail(runId) {
+  const { data, error } = await supabase.from('run_details').select('*').eq('run_id', runId).is('error', null).maybeSingle();
+  if (error) throw error;
+  return data;
+}

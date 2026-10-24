@@ -174,9 +174,9 @@ function latestRunHtml(run) {
     run.elevation_m != null && ['Elevation', `${Math.round(run.elevation_m)} m`],
   ].filter(Boolean);
   return `
-    <div class="latest">
-      <div class="latest-title">${run.title ?? 'Run'}</div>
+    <a class="latest" href="#run/${run.id}">
+      <div class="latest-title">${run.title ?? 'Run'} <span class="muted small">· details →</span></div>
       <div class="sub">Latest run · ${fmtDate(run.date, { weekday: 'short', day: 'numeric', month: 'short' })}</div>
       <div class="latest-stats">${stats.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>
-    </div>`;
+    </a>`;
 }
