@@ -24,7 +24,9 @@ function loadTurnstile() {
 export async function ensureHuman(root) {
   if (LOCAL) return;
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) return;
+  if (session?.user?.is_anonymous) return;
+  // A session from the old owner sign-in (email, now switched off) is not accepted by the database.
+  if (session) await supabase.auth.signOut({ scope: 'local' });
 
   document.body.classList.add('gated');
   root.innerHTML = `

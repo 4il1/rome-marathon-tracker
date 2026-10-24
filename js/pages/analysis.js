@@ -1,7 +1,7 @@
 import { SESSIONS } from '../plan-data.js';
 import { PACES } from '../paces.js';
 import { CONFIG } from '../config.js';
-import { loadRuns, loadDetails, loadRecovery } from '../data.js';
+import { loadRuns, loadDetails, loadRecovery, supabase } from '../data.js';
 import { today, addDays, planStart, planWeek, daysBetween, fmtDate, km1, WEEKS } from '../util.js';
 import { css, INTENSITY, STATUS, STATUS_ICON, toSec, clock, paceStr, baseOptions, paceAxis, refsPlugin, timeAxis } from '../charts.js';
 import { efficiency, routes, isEasy, rolling, monthly, workload, workloadStatus, intensityByWeek, goalPaceKm } from '../metrics.js';
@@ -417,7 +417,15 @@ async function unlock(body, pw, fromSaved) {
   const since = addDays(today(), -120);
   const iso = `${since.getFullYear()}-${String(since.getMonth() + 1).padStart(2, '0')}-${String(since.getDate()).padStart(2, '0')}`;
   let res;
-  try { res = await loadRecovery(pw, iso); } catch (e) { return lockForm(body, `Couldn't load recovery data: ${e.message}`); }
+  try { res = await loadRecovery(pw, iso); } catch (e) {
+    // No valid visitor session (it lapsed or was cleared): the human check has to run again.
+    if (e.code === '42501' || /JWT|permission denied/i.test(e.message)) {
+      body.innerHTML = '<div class="panel">Your visit has expired. <button class="btn primary" type="button" id="again">Reload and check again</button></div>';
+      body.querySelector('#again').addEventListener('click', async () => { await supabase.auth.signOut({ scope: 'local' }); location.reload(); });
+      return;
+    }
+    return lockForm(body, `Couldn't load recovery data: ${e.message}`);
+  }
   if (!res.ok) {
     try { sessionStorage.removeItem(PW_KEY); } catch { /* storage blocked */ }
     return lockForm(body, fromSaved ? '' : res.reason === 'locked' ? 'Too many wrong passwords. Try again in an hour.' : 'Wrong password.');
