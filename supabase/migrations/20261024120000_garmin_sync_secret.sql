@@ -7,7 +7,8 @@ language sql
 security definer
 set search_path = ''
 as $$
-  select exists (select 1 from vault.decrypted_secrets where name = 'garmin_sync_secret' and decrypted_secret = secret and secret <> '');
+  -- $1, not `secret`: vault.decrypted_secrets has its own `secret` column, which would shadow the parameter.
+  select exists (select 1 from vault.decrypted_secrets d where d.name = 'garmin_sync_secret' and d.decrypted_secret = $1 and $1 <> '');
 $$;
 
 revoke all on function public.check_garmin_sync_secret(text) from public, anon, authenticated;
