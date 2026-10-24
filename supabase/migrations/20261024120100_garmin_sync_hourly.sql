@@ -1,6 +1,6 @@
 -- Run garmin-sync at 7 minutes past every hour. Fetches the last 14 days; duplicates are skipped.
 create extension if not exists pg_cron;
-create extension if not exists pg_net;
+create extension if not exists pg_net with schema extensions;
 
 select cron.schedule(
   'garmin-sync-hourly',
